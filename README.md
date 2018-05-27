@@ -93,3 +93,7 @@ sudo apt-get install nginx sqlite3 php-fpm php-sqlite3 php-mbstring php-curl php
 Автор: NoHate
 
 Контакты: можно телеграфировать
+
+## Всякое
+
+Ошибки и прочее - разбирайтесь сами. Меня не беспокоить.
