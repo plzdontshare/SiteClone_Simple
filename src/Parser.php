@@ -40,11 +40,12 @@ class Parser
      */
     public function urlFromBing($keyword)
     {
-        $url = "https://www.bing.com/search?format=rss&q=" . urlencode($keyword). ' language:' . $this->config['parser']['bing']['lang'] . ' ' . $this->config['parser']['bing']['search_tail'];
+        $url = "https://www.bing.com/search?format=rss&q=" . urlencode($keyword . ' language:' . $this->config['parser']['bing']['lang'] . ' ' . $this->config['parser']['bing']['search_tail']);
         $response = $this->curlGET($url);
 
         $matches = [];
         preg_match_all("#<link>(.*)</link>#Uuis", $response, $matches);
+        
         if (!isset($matches[1])) {
             return false;
         }
@@ -121,6 +122,10 @@ class Parser
         $url = rtrim($url, '/');
         $url .= '/';
         preg_match("#(https?)://(.*)/#Uuis", $url, $matches);
+        
+        if (empty($matches)) {
+            return false;
+        }
         
         $scheme = $matches[1];
         $domain = $matches[2];

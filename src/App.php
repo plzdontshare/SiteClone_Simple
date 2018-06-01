@@ -75,13 +75,26 @@ class App
             }
         }
         
+        $content = null;
+        
         if ($page['parsed'] === 0) {
             $url = $this->parser->urlFromBing($page['keyword']);
-            $content = $this->parser->processUrl($url, $page['keyword']);
-            $this->db->update($page['id'], ['parsed' => 1, 'url' => $url]);
+            // Sometimes bing returns no results, so we shouldn't try to process empty url
+            if ($url !== false) {
+                $content = $this->parser->processUrl($url, $page['keyword']);
+                if ($content !== false) {
+                    $this->db->update($page['id'], ['parsed' => 1, 'url' => $url]);
+                }
+            }
         } else {
             $content = $this->parser->processUrl($page['url'], $page['keyword']);
-            $content = $content;
+        }
+        
+        // We should have something in the $content
+        if (empty($content)) {
+            $response->setResponseCode(Response::ERROR_RESPONSE_CODE);
+            
+            return $response;
         }
     
         $content = $this->preProcess($content);
