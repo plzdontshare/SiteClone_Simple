@@ -95,14 +95,16 @@ class Database
         $keywords = array_chunk($keywords, 500);
         foreach ($keywords as $keywords_chunk) {
             $this->db->exec('BEGIN IMMEDIATE;');
-            $sql = "INSERT INTO `pages` (`keyword`, `parsed`, `created_at`, `url`) VALUES ";
+            $placeholders = implode(', ', array_fill(0, count($keywords_chunk), "(?, 0, {$now})"));
+            $stmt = $this->db->prepare("INSERT INTO `pages` (`keyword`, `parsed`, `created_at`) VALUES {$placeholders};");
+    
+            $i = 1;
             foreach ($keywords_chunk as $keyword) {
                 $keyword = trim($keyword);
-                $sql .= "('{$keyword}', 0, {$now}, ''),";
+                $stmt->bindValue($i++, $keyword);
             }
-            $sql = rtrim($sql, ',') . ';';
-
-            $this->db->exec($sql);
+            
+            $stmt->execute();
             $this->db->exec('COMMIT;');
         }
     }
