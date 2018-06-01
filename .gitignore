@@ -1,2 +1,3 @@
 /conf/keywords.txt
 /conf/keywords_*
+/db/*.db
