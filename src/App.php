@@ -161,7 +161,10 @@ class App
                 $host_parts = explode('.', $host);
                 if (count($host_parts) > ($this->config['linking']['subdomains']['max_level'] - 1)) {
                     array_shift($host_parts);
-                    $host = implode('.', $host_parts);
+                    $host_check = implode('.', $host_parts);
+                    if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/db/' . $host_check)) {
+                        $host = $host_check;
+                    }
                 }
                 
                 $db = new Database($this->config);
@@ -229,7 +232,11 @@ class App
         $hosts = scandir(DATABASE_DIR);
         $hosts = array_diff($hosts, ['..', '.', '.htaccess']);
         $hosts = array_filter($hosts, function ($file) {
-            return !preg_match("#(db-shm|db-wal)#Uuis", $file);
+            if (!preg_match("#(db-shm|db-wal)#Uuis", $file)) {
+                if (filesize($_SERVER['DOCUMENT_ROOT'] . '/db/' . $file) > 5000) {
+                     return $file;
+                }
+            }
         });
         
         return $hosts;
