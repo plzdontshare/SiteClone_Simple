@@ -162,7 +162,7 @@ class App
                 if (count($host_parts) > ($this->config['linking']['subdomains']['max_level'] - 1)) {
                     array_shift($host_parts);
                     $host_check = implode('.', $host_parts);
-                    if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/db/' . $host_check)) {
+                    if (file_exists(DATABASE_DIR . '/' . $host_check)) {
                         $host = $host_check;
                     }
                 }
@@ -233,7 +233,7 @@ class App
         $hosts = array_diff($hosts, ['..', '.', '.htaccess']);
         $hosts = array_filter($hosts, function ($file) {
             if (!preg_match("#(db-shm|db-wal)#Uuis", $file)) {
-                if (filesize($_SERVER['DOCUMENT_ROOT'] . '/db/' . $file) > 5000) {
+                if (filesize(DATABASE_DIR . '/' . $file) > 5000) {
                      return $file;
                 }
             }
